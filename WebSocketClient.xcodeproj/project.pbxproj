@@ -30,6 +30,7 @@
 		C4F63ABC20AA6756009CF95A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F63ABB20AA6756009CF95A /* main.m */; };
 		C4F63AC620AA6756009CF95A /* WebSocketClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F63AC520AA6756009CF95A /* WebSocketClientTests.m */; };
 		C4F63AD120AA6756009CF95A /* WebSocketClientUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F63AD020AA6756009CF95A /* WebSocketClientUITests.m */; };
+		E9A0196722F83481003AE4B8 /* KeyStoreFile.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A0196622F83481003AE4B8 /* KeyStoreFile.m */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -96,6 +97,8 @@
 		C4F63ACC20AA6756009CF95A /* WebSocketClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WebSocketClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4F63AD020AA6756009CF95A /* WebSocketClientUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebSocketClientUITests.m; sourceTree = "<group>"; };
 		C4F63AD220AA6756009CF95A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E9A0196522F8338C003AE4B8 /* KeyStoreFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KeyStoreFile.h; path = "WebSocketClient/jingtum-lib/KeyStoreFile.h"; sourceTree = SOURCE_ROOT; };
+		E9A0196622F83481003AE4B8 /* KeyStoreFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = KeyStoreFile.m; path = "WebSocketClient/jingtum-lib/KeyStoreFile.m"; sourceTree = SOURCE_ROOT; };
 		F48912CF288D0B6A28A24C48 /* Pods-WebSocketClient.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-WebSocketClient.release.xcconfig"; path = "Pods/Target Support Files/Pods-WebSocketClient/Pods-WebSocketClient.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
@@ -173,6 +176,8 @@
 				C44BE4D7212AE3CC0012F47D /* TumAmount.m */,
 				C43B8CB2211B31FB0051B064 /* Seed.h */,
 				C43B8CB3211B31FB0051B064 /* Seed.m */,
+				E9A0196522F8338C003AE4B8 /* KeyStoreFile.h */,
+				E9A0196622F83481003AE4B8 /* KeyStoreFile.m */,
 			);
 			name = "jingtum-lib";
 			path = "New Group";
@@ -415,6 +420,7 @@
 				C445C9EF20DC9B1E00FF63C9 /* Remote.m in Sources */,
 				C445CA0820E7742A00FF63C9 /* NSString+Base58.m in Sources */,
 				C43B8CBD211B34250051B064 /* Keypairs.m in Sources */,
+				E9A0196722F83481003AE4B8 /* KeyStoreFile.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
