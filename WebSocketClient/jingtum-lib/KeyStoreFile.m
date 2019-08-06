@@ -36,7 +36,7 @@
     
     CipherParams* obj = (CipherParams*)object;
     
-    return [[self getIv]isEqualToString:[obj getIv]];
+    return [[self getIv]isEqual:[obj getIv]];
 }
 - (NSUInteger)hash
 {
@@ -109,11 +109,11 @@
     {
         return NO;
     }
-    if(prf != nil ? ![prf isEqualToString:[obj getPrf]] : [obj getPrf] != nil)
+    if(prf != nil ? ![prf isEqual:[obj getPrf]] : [obj getPrf] != nil)
     {
         return NO;
     }
-    return salt != nil ? [salt isEqualToString:[obj getSalt]] : [obj getSalt] == nil;
+    return salt != nil ? [salt isEqual:[obj getSalt]] : [obj getSalt] == nil;
 }
 -(NSUInteger)hash
 {
@@ -208,7 +208,7 @@
         return NO;
     }
 
-    return salt != nil ? [salt isEqualToString:[obj getSalt]] : [obj getSalt] == nil;
+    return salt != nil ? [salt isEqual:[obj getSalt]] : [obj getSalt] == nil;
 }
 -(NSUInteger)hash
 {
@@ -222,14 +222,208 @@
 
 @end
 
+/**********************************************/
 
-
+//102-225
 @implementation Crypto
+-(id)init
+{
+    self = [super init];
+    return self;
+}
 
+-(NSString *)getCipher
+{
+    return cipher;
+}
+-(void)setCipher:(NSString *)_cipher
+{
+    cipher = _cipher;
+}
+-(NSString *)getCiphertext
+{
+    return ciphertext;
+}
+-(void)setCiphertext:(NSString *)_ciphertext
+{
+    ciphertext = _ciphertext;
+}
+-(CipherParams *)getCipherparams
+{
+    return cipherparams;
+}
+-(void)setCipherparams:(CipherParams *)_cipherparams
+{
+    cipherparams =_cipherparams;
+}
+-(NSString *)getKdf
+{
+    return kdf;
+}
+-(void)setKdf:(NSString *)_kdf
+{
+    kdf = _kdf;
+}
+-(id<KdfParams>)getKdfparams
+{
+    return kdfparams;
+}
+-(void)setKdfparam:(id<KdfParams>)_kdfparams
+{
+    kdfparams =_kdfparams;
+}
+-(NSString *)getMac
+{
+    return mac;
+}
+-(void)setMac:(NSString *)_mac
+{
+    mac = _mac;
+}
+
+//json
+
+
+-(BOOL)isEqual:(id)object
+{
+    if (self == object)
+    {
+        return YES;
+    }
+    
+    if (![object isKindOfClass:[Crypto class]])
+    {
+        return NO;
+    }
+    
+    Crypto* obj = (Crypto*)object;
+
+    if(cipher != nil ? ![cipher isEqual:[obj getCipher]] : [obj getCipher] != nil)
+    {
+        return NO;
+    }
+    if(ciphertext != nil ? ![ciphertext isEqual:[obj getCiphertext]] : [obj getCiphertext] != nil)
+    {
+        return NO;
+    }
+    if(cipherparams != nil ? ![cipherparams isEqual:[obj getCipherparams]] : [obj getCipherparams] != nil)
+    {
+        return NO;
+    }
+    if(kdf != nil ? ![kdf isEqual:[obj getKdf]] : [obj getKdf] != nil)
+    {
+        return NO;
+    }
+    if(kdfparams != nil ? ![kdfparams isEqual:[obj getKdfparams]] : [obj getKdfparams] != nil)
+    {
+        return NO;
+    }
+
+    return mac != nil ? [mac isEqual:[obj getMac]] : [obj getMac] == nil;
+}
+-(NSUInteger)hash
+{
+    NSUInteger result = (cipher != nil ? [cipher hash] : 0);
+    result = 31 * result+(ciphertext != nil ? [ciphertext hash] : 0);
+    result = 31 * result+(cipherparams != nil ? [cipherparams hash] : 0);
+    result = 31 * result+(kdf != nil ? [kdf hash] : 0);
+    result = 31 * result+(kdfparams != nil ? [kdfparams hash] : 0);
+    result = 31 * result+(mac != nil ? [mac hash] : 0);
+    return result;
+}
 
 @end
 
+/**********************************************/
+//16 - 100 & 463 - 473
 @implementation KeyStoreFile
 
+-(id)init
+{
+    self = [super init];
+    return self;
+}
+-(NSString *)getAddress
+{
+    return address;
+}
+-(void)setAddress:(NSString *)_address
+{
+    address = _address;
+}
+-(Crypto *)getCrypto
+{
+    return crypto;
+}
+-(void)setCrypto:(Crypto *)_crypto
+{
+    crypto = _crypto;
+}
+-(NSString *)getId
+{
+    return ID;
+}
+-(void)setId:(NSString *)_ID
+{
+    ID = _ID;
+}
+-(int)getVersion
+{
+    return version;
+}
+-(void)setVersion:(int)_version
+{
+    version = _version;
+}
+
+-(BOOL)isEqual:(id)object
+{
+    if (self == object)
+    {
+        return YES;
+    }
+    
+    if (![object isKindOfClass:[KeyStoreFile class]])
+    {
+        return NO;
+    }
+    
+    KeyStoreFile * obj = (KeyStoreFile *)object;
+    
+    if(address != nil ? ![address isEqual:[obj getAddress]] : [obj getAddress] != nil)
+    {
+        return NO;
+    }
+    if(crypto != nil ? ![crypto isEqual:[obj getCrypto]] : [obj getCrypto] != nil)
+    {
+        return NO;
+    }
+    if(ID != nil ? ![ID isEqual:[obj getId]] : [obj getId] != nil)
+    {
+        return NO;
+    }
+    return version == [obj getVersion];
+}
+-(NSUInteger)hash
+{
+    NSUInteger result = (address != nil ? [address hash] : 0);
+    result = 31 * result+(crypto != nil ? [crypto hash] : 0);
+    result = 31 * result+(ID != nil ? [ID hash] : 0);
+    result = 31 * result+version;
+    return result;
+}
+
+//temp
+-(KeyStoreFile *) parse:(NSString *)keystore
+{
+    KeyStoreFile *result = [[KeyStoreFile alloc] init];
+    return result;
+}
+
+//temp
+-(NSString *)description
+{
+    return [NSString stringWithFormat:@"temp"];
+}
 
 @end

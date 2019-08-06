@@ -74,23 +74,54 @@
 
 @end
 
+//439-461
+//json about
 
+
+//102-225
 @interface Crypto : NSObject
 {
     NSString *cipher;
     NSString *ciphertext;
-    
-    
+    CipherParams *cipherparams;
+    NSString *kdf;
+    id<KdfParams> kdfparams;
+    NSString *mac;
 }
+-(NSString *)getCipher;
+-(void)setCipher:(NSString *)_cipher;
+-(NSString *)getCiphertext;
+-(void)setCiphertext:(NSString *)_ciphertext;
+-(CipherParams *)getCipherparams;
+-(void)setCipherparams:(CipherParams *)_cipherparams;
+-(NSString *)getKdf;
+-(void)setKdf:(NSString *)_kdf;
+-(id<KdfParams>)getKdfparams;
+-(void)setKdfparam:(id<KdfParams>)_kdfparams;
+-(NSString *)getMac;
+-(void)setMac:(NSString *)_mac;
 
 @end
 
+
+//16 - 100 & 463 - 473
 @interface KeyStoreFile : NSObject
 {
     NSString *address;
-    
+    Crypto *crypto;
+    NSString *ID;//id is key word , so use ID
+    int version;
 }
-
+-(NSString *)getAddress;
+-(void)setAddress:(NSString *)_address;
+-(Crypto *)getCrypto;
+-(void)setCrypto:(Crypto *)_crypto;
+-(NSString *)getId;
+-(void)setId:(NSString *)_ID;
+-(int)getVersion;
+-(void)setVersion:(int)_version;
+-(KeyStoreFile *) parse:(NSString *)keystore;
+//toString use description
 @end
 
 #endif /* KeyStoreFile_h */
