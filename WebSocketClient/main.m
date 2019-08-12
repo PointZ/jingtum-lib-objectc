@@ -18,12 +18,12 @@
 //#import "NASHA3.h"
 
 #import "KeyStoreFile.h"
+#import "KeyStore.h"
 
 int main(int argc, char * argv[]) {
-    NSString* jsondata = @"{\"address\":\"jHY6aRcs7J6KnfgqD4FVwTQ247boj9nbDZ\",\"id\":\"1c1bf720-82fd-4ed3-bddf-72ebbc7b4262\",\"version\":3,\"crypto\":{\"cipher\":\"aes-128-ctr\",\"ciphertext\":\"0bc63928ace81eb82869d5008372830191bad7706ef2101665d009a9e6\",\"cipherparams\":{\"iv\":\"2ae846f498bbb6ff6a7d572d51cdd74b\"},\"kdf\":\"scrypt\",\"kdfparams\":{\"dklen\":32,\"n\":4096,\"p\":6,\"r\":8,\"salt\":\"944611340b628e66850eff427ec0df006788d2aa7e3809b383dbe05282edd723\"},\"mac\":\"ad1343750c048c96b019dc09dd6a5b93d5664cfd5147dd052ec040546d53617f\"}}";
+    /*
+
     
-    NSError* err = nil;
-    KeyStoreFileModel* keystore = [[KeyStoreFileModel alloc] initWithString:jsondata error:&err];
     
     NSLog(@"address:%@",[keystore address]);
     NSLog(@"id:%@",[keystore id]);
@@ -58,8 +58,22 @@ int main(int argc, char * argv[]) {
     NSLog(@"encryoptKey:%@",encryoptKey);
     NSLog(@"iv:%@",iv);
     NSLog(@"privateKeyBytes:%@",privateKeyBytes);
-    
+    */
     //NSLog(@"%@",derivedKey);
+    
+    NAChlorideInit();
+    NSString *secret = @"shExMjiMqza4DdMaSg3ra9vxWPZsQ";
+    Seed * seed = [Seed alloc];
+    Keypairs *keypairs = [seed deriveKeyPair:secret];
+    Wallet *wallet = [[Wallet alloc]initWithKeypairs:keypairs private:secret];
+    KeyStoreFileModel *keyStoreFile = [KeyStore createLight:@"Key123456" wallet:wallet];
+    NSLog(@"json:%@",[keyStoreFile toJSONString]);
+    
+    NSString* jsondata = @"{\"address\":\"jHY6aRcs7J6KnfgqD4FVwTQ247boj9nbDZ\",\"id\":\"1c1bf720-82fd-4ed3-bddf-72ebbc7b4262\",\"version\":3,\"crypto\":{\"cipher\":\"aes-128-ctr\",\"ciphertext\":\"0bc63928ace81eb82869d5008372830191bad7706ef2101665d009a9e6\",\"cipherparams\":{\"iv\":\"2ae846f498bbb6ff6a7d572d51cdd74b\"},\"kdf\":\"scrypt\",\"kdfparams\":{\"dklen\":32,\"n\":4096,\"p\":6,\"r\":8,\"salt\":\"944611340b628e66850eff427ec0df006788d2aa7e3809b383dbe05282edd723\"},\"mac\":\"ad1343750c048c96b019dc09dd6a5b93d5664cfd5147dd052ec040546d53617f\"}}";
+    NSError* err = nil;
+    KeyStoreFileModel* keystore = [[KeyStoreFileModel alloc] initWithString:jsondata error:&err];
+    Wallet *wallet2 = [KeyStore decrypt:secret wallerFile:keystore];
+    
     @autoreleasepool {
         return UIApplicationMain(argc, argv, nil, NSStringFromClass([AppDelegate class]));
     }

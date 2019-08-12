@@ -17,7 +17,23 @@
 +(KeyStoreFileModel*)createStandard:(NSString*)password wallet:(Wallet*)wallet;
 +(KeyStoreFileModel*)createLight:(NSString*)password wallet:(Wallet*)wallet;
 +(KeyStoreFileModel*)create:(NSString*)password wallet:(Wallet*)wallet n:(int)n p:(int)p;
++(KeyStoreFileModel*)createWalletFile:(Wallet*)wallet cipherText:(NSData*)cipherText iv:(NSData*)iv salt:(NSData*)salt mac:(NSData*)mac n:(int)n p:(int)p;
++(Wallet*) decrypt:(NSString*)password wallerFile:(KeyStoreFileModel*) walletFile;
 
+//NSData to Hex
++(NSString *)convertDataToHexStr:(NSData *)data;
++(NSData*) convertBytesStringToData:(NSString *)str;
+
+//获取设备UUID
++(NSString *)getUUID;
+
+//AES加密解密部分
++(NSData*) cipherOperation:(NSData*)contentData key:(NSData*)keyData iv:(NSData*)initVector operation:(CCOperation)operation;
++(NSData*) aesEncryptData:(NSData*)contentData key:(NSData*)keyData iv:(NSData*)iv;
++(NSData*) aesDecryptData:(NSData*)contentData key:(NSData*)keyData iv:(NSData*)iv;
+
+//KECCAK256 MAC加密部分
++(NSData*) generateMac:(NSData*)derivedKey cipherText:(NSData*)cipherText;
 @end
 
 #endif /* KeyStore_h */
