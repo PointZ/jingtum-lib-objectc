@@ -30,6 +30,7 @@
 		C4F63ABC20AA6756009CF95A /* main.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F63ABB20AA6756009CF95A /* main.m */; };
 		C4F63AC620AA6756009CF95A /* WebSocketClientTests.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F63AC520AA6756009CF95A /* WebSocketClientTests.m */; };
 		C4F63AD120AA6756009CF95A /* WebSocketClientUITests.m in Sources */ = {isa = PBXBuildFile; fileRef = C4F63AD020AA6756009CF95A /* WebSocketClientUITests.m */; };
+		E95CE0C82301511200C9908A /* KeyStore.m in Sources */ = {isa = PBXBuildFile; fileRef = E95CE0C72301511200C9908A /* KeyStore.m */; };
 		E9A0196722F83481003AE4B8 /* KeyStoreFile.m in Sources */ = {isa = PBXBuildFile; fileRef = E9A0196622F83481003AE4B8 /* KeyStoreFile.m */; };
 		E9C6A98222FCFD0F0032E2A4 /* NADigest.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C6A98122FCFD0F0032E2A4 /* NADigest.m */; };
 		E9C6A98522FCFDF30032E2A4 /* NAKeccak.m in Sources */ = {isa = PBXBuildFile; fileRef = E9C6A98422FCFDF30032E2A4 /* NAKeccak.m */; };
@@ -104,6 +105,8 @@
 		C4F63ACC20AA6756009CF95A /* WebSocketClientUITests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = WebSocketClientUITests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		C4F63AD020AA6756009CF95A /* WebSocketClientUITests.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = WebSocketClientUITests.m; sourceTree = "<group>"; };
 		C4F63AD220AA6756009CF95A /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		E95CE0C72301511200C9908A /* KeyStore.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = KeyStore.m; path = "WebSocketClient/jingtum-lib/KeyStore.m"; sourceTree = SOURCE_ROOT; };
+		E95CE0C92301515700C9908A /* KeyStore.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KeyStore.h; path = "WebSocketClient/jingtum-lib/KeyStore.h"; sourceTree = SOURCE_ROOT; };
 		E9A0196522F8338C003AE4B8 /* KeyStoreFile.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = KeyStoreFile.h; path = "WebSocketClient/jingtum-lib/KeyStoreFile.h"; sourceTree = SOURCE_ROOT; };
 		E9A0196622F83481003AE4B8 /* KeyStoreFile.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; name = KeyStoreFile.m; path = "WebSocketClient/jingtum-lib/KeyStoreFile.m"; sourceTree = SOURCE_ROOT; };
 		E9C6A98022FCFCFA0032E2A4 /* NADigest.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; name = NADigest.h; path = "WebSocketClient/New Group/Keccak/NADigest.h"; sourceTree = SOURCE_ROOT; };
@@ -205,6 +208,8 @@
 				C44BE4D7212AE3CC0012F47D /* TumAmount.m */,
 				C43B8CB2211B31FB0051B064 /* Seed.h */,
 				C43B8CB3211B31FB0051B064 /* Seed.m */,
+				E95CE0C92301515700C9908A /* KeyStore.h */,
+				E95CE0C72301511200C9908A /* KeyStore.m */,
 				E9A0196522F8338C003AE4B8 /* KeyStoreFile.h */,
 				E9A0196622F83481003AE4B8 /* KeyStoreFile.m */,
 			);
@@ -481,6 +486,7 @@
 				C43B8CC0211B34250051B064 /* NSMutableData+Bitcoin.m in Sources */,
 				C445C9F320DC9B4D00FF63C9 /* SocketRocketUtility.m in Sources */,
 				C445C9EF20DC9B1E00FF63C9 /* Remote.m in Sources */,
+				E95CE0C82301511200C9908A /* KeyStore.m in Sources */,
 				E9C6A99F22FD5BBE0032E2A4 /* KeccakF-1600-opt32.c in Sources */,
 				C445CA0820E7742A00FF63C9 /* NSString+Base58.m in Sources */,
 				C43B8CBD211B34250051B064 /* Keypairs.m in Sources */,
