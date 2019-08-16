@@ -20,10 +20,10 @@
 @interface KdfparamsModel : JSONModel
 
 @property (assign, nonatomic) int dklen;
-@property (assign, nonatomic) int n;
-@property (assign, nonatomic) int p;
-@property (assign, nonatomic) int r;
-@property (assign, nonatomic) int c;
+@property (assign, nonatomic) NSNumber <Optional> *n;
+@property (assign, nonatomic) NSNumber <Optional> *p;
+@property (assign, nonatomic) NSNumber <Optional> *r;
+@property (assign, nonatomic) NSNumber <Optional> *c;
 @property (strong, nonatomic) NSString* salt;
 @property (strong, nonatomic) NSString<Optional>* prf;
 

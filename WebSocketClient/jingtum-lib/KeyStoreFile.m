@@ -14,20 +14,6 @@
 
 
 @implementation KdfparamsModel
-
-+ (BOOL)propertyIsOptional:(NSString *)propertyName
-{
-    if ([propertyName isEqualToString:@"c"])
-        return YES;
-    if ([propertyName isEqualToString:@"n"])
-        return YES;
-    if ([propertyName isEqualToString:@"p"])
-        return YES;
-    if ([propertyName isEqualToString:@"r"])
-        return YES;
-    return NO;
-}
-
 @end
 
 

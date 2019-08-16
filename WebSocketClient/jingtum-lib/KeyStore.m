@@ -25,7 +25,7 @@ static int N_LIGHT = 1<<12;
 static int P_LIGHT = 6;
 static int N_STANDARD = 1<<18;
 static int P_STANDARD = 1;
-static int R = 18;
+static int R = 8;
 static int DKLEN = 32;
 static int CURRTENT_VERSION = 3;
 
@@ -47,16 +47,25 @@ static NSString* SCRYPT = @"scrypt";
 +(KeyStoreFileModel*)create:(NSString*)password wallet:(Wallet*)wallet n:(int)n p:(int)p
 {
     NAChlorideInit();
-    
-    NSData *salt = [NARandom randomData:32];
+    //NSData *salt = [NARandom randomData:32];
+    NSData *salt =[self convertBytesStringToData:@"5dba7767e7ff9c1c97b6d60ba9b1de163fa1322937d08f946c8da58b1a9ee6cb"];
     NSData *passwordByte = [password dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error = nil;
     NSData *derivedKey = [NAScrypt scrypt:passwordByte salt:salt N:n r:R p:p length:DKLEN error:&error];
+    NSLog(@"%@", [self convertDataToHexStr:derivedKey]);
     NSData *encryoptKey =[derivedKey subdataWithRange:NSMakeRange(0, 16)];
-    NSData *iv = [NARandom randomData:16];
+    NSLog(@"%@", [self convertDataToHexStr:encryoptKey]);
+    //NSData *iv = [NARandom randomData:16];
+    
+    NSData *iv =[self convertBytesStringToData:@"5919a973e7907cfdcc8a004c1e0e3ee9"];
+    
+    NSLog(@"%@", [self convertDataToHexStr:iv]);
     NSData *privateKeyBytes = [[wallet secret] dataUsingEncoding:NSUTF8StringEncoding];
+    NSLog(@"%@", [self convertDataToHexStr:privateKeyBytes]);
     NSData *cipherText = [self aesEncryptData:privateKeyBytes key:encryoptKey iv:iv];
+    NSLog(@"%@", [self convertDataToHexStr:cipherText]);
     NSData *mac = [self generateMac:derivedKey cipherText:cipherText];
+    NSLog(@"%@", [self convertDataToHexStr:mac]);
     
     return [self createWalletFile:wallet cipherText:cipherText iv:iv salt:salt mac:mac n:n p:p];
     
@@ -81,9 +90,9 @@ static NSString* SCRYPT = @"scrypt";
     [crypto setKdf:SCRYPT];
     
     KdfparamsModel *kdfParams = [[KdfparamsModel alloc]init];
-    [kdfParams setN:n];
-    [kdfParams setP:p];
-    [kdfParams setR:R];
+    [kdfParams setN:[NSNumber numberWithInt:n]];
+    [kdfParams setP:[NSNumber numberWithInt:p]];
+    [kdfParams setR:[NSNumber numberWithInt:R]];
     [kdfParams setDklen:DKLEN];
     [kdfParams setSalt:[self convertDataToHexStr:salt]];
     [crypto setKdfparams:kdfParams];
@@ -203,7 +212,7 @@ static NSString* SCRYPT = @"scrypt";
     
     CCCryptorStatus cryptStatus = CCCrypt(operation,
                                           kCCAlgorithmAES,
-                                          kCCOptionPKCS7Padding,
+                                          ccNoPadding | kCCModeCTR,
                                           keyBytes,
                                           kCCKeySizeAES128,
                                           initVectorBytes,
@@ -212,10 +221,12 @@ static NSString* SCRYPT = @"scrypt";
                                           operationBytes,
                                           operationSize,
                                           &actualOutSize);
-    
-    if (cryptStatus == kCCSuccess) {
+    if (cryptStatus == kCCSuccess)
+    {
         return [NSData dataWithBytesNoCopy:operationBytes length:actualOutSize];
     }
+    
+    NSLog(@"AES加密/解密失败 error: %@", @(cryptStatus));
     free(operationBytes);
     operationBytes = NULL;
     return nil;
@@ -236,7 +247,7 @@ static NSString* SCRYPT = @"scrypt";
     NSMutableData *mData = [[NSMutableData alloc] init];
     [mData appendData:derivedKey];
     [mData appendData:cipherText];
-    return [NAKeccak SHA3ForData:mData digestBitLength:512];
+    return [NAKeccak SHA3ForData:mData digestBitLength:256];
 }
 @end
 

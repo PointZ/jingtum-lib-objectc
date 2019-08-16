@@ -68,10 +68,23 @@ int main(int argc, char * argv[]) {
     Wallet *wallet = [[Wallet alloc]initWithKeypairs:keypairs private:secret];
     KeyStoreFileModel *keyStoreFile = [KeyStore createLight:@"Key123456" wallet:wallet];
     NSLog(@"json:%@",[keyStoreFile toJSONString]);
+    Wallet *decryptEthECKeyPair = [KeyStore decrypt:@"Key123456" wallerFile:keyStoreFile];
+    //NSLog(@"address:%@",[decryptEthECKeyPair toJSONString]);
+    
+    Keypairs *temp = [decryptEthECKeyPair keypairs] ;
+    
+    NSData *bytes = [[temp pub] BTCHash160];
+    BTCAddress *btcAddress = [BTCPublicKeyAddress addressWithData:bytes];
+    NSString *address = btcAddress.base58String;
+    NSLog(@"address: %@", address);
+    
+    NSLog(@"PrivateKey:%@",[decryptEthECKeyPair secret]);
+    
     
     NSString* jsondata = @"{\"address\":\"jHY6aRcs7J6KnfgqD4FVwTQ247boj9nbDZ\",\"id\":\"1c1bf720-82fd-4ed3-bddf-72ebbc7b4262\",\"version\":3,\"crypto\":{\"cipher\":\"aes-128-ctr\",\"ciphertext\":\"0bc63928ace81eb82869d5008372830191bad7706ef2101665d009a9e6\",\"cipherparams\":{\"iv\":\"2ae846f498bbb6ff6a7d572d51cdd74b\"},\"kdf\":\"scrypt\",\"kdfparams\":{\"dklen\":32,\"n\":4096,\"p\":6,\"r\":8,\"salt\":\"944611340b628e66850eff427ec0df006788d2aa7e3809b383dbe05282edd723\"},\"mac\":\"ad1343750c048c96b019dc09dd6a5b93d5664cfd5147dd052ec040546d53617f\"}}";
     NSError* err = nil;
     KeyStoreFileModel* keystore = [[KeyStoreFileModel alloc] initWithString:jsondata error:&err];
+    
     Wallet *wallet2 = [KeyStore decrypt:secret wallerFile:keystore];
     
     @autoreleasepool {
