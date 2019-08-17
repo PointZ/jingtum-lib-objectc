@@ -28,9 +28,7 @@
 +(NSString *)getUUID;
 
 //AES加密解密部分
-+(NSData*) cipherOperation:(NSData*)contentData key:(NSData*)keyData iv:(NSData*)initVector operation:(CCOperation)operation;
-+(NSData*) aesEncryptData:(NSData*)contentData key:(NSData*)keyData iv:(NSData*)iv;
-+(NSData*) aesDecryptData:(NSData*)contentData key:(NSData*)keyData iv:(NSData*)iv;
+
 
 //KECCAK256 MAC加密部分
 +(NSData*) generateMac:(NSData*)derivedKey cipherText:(NSData*)cipherText;

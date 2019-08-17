@@ -14,8 +14,7 @@
 
 #import "NSString+Base58.h"
 
-#include <CommonCrypto/CommonCryptor.h>
-
+#import <CommonCrypto/CommonCrypto.h>
 
 #import "NADigest.h"
 #import "NAKeccak.h"
@@ -47,25 +46,37 @@ static NSString* SCRYPT = @"scrypt";
 +(KeyStoreFileModel*)create:(NSString*)password wallet:(Wallet*)wallet n:(int)n p:(int)p
 {
     NAChlorideInit();
-    //NSData *salt = [NARandom randomData:32];
-    NSData *salt =[self convertBytesStringToData:@"5dba7767e7ff9c1c97b6d60ba9b1de163fa1322937d08f946c8da58b1a9ee6cb"];
+    
+    //NSData *salt =[self convertBytesStringToData:@"51fb4a537aa86674e3cf2141801d1dcaaddaa0ddfd3bbe423f6794767ddb4838"];
+    NSData *salt = [NARandom randomData:32];
     NSData *passwordByte = [password dataUsingEncoding:NSUTF8StringEncoding];
     NSError *error = nil;
     NSData *derivedKey = [NAScrypt scrypt:passwordByte salt:salt N:n r:R p:p length:DKLEN error:&error];
-    NSLog(@"%@", [self convertDataToHexStr:derivedKey]);
+    NSLog(@"derivedKey:%@", [self convertDataToHexStr:derivedKey]);
+    
     NSData *encryoptKey =[derivedKey subdataWithRange:NSMakeRange(0, 16)];
-    NSLog(@"%@", [self convertDataToHexStr:encryoptKey]);
-    //NSData *iv = [NARandom randomData:16];
+    NSLog(@"encryoptKey:%@", [self convertDataToHexStr:encryoptKey]);
     
-    NSData *iv =[self convertBytesStringToData:@"5919a973e7907cfdcc8a004c1e0e3ee9"];
+    //NSData *iv =[self convertBytesStringToData:@"dcbf307ddac9036c0adbca8f2bbdf37a"];
+    NSData *iv = [NARandom randomData:16];
+    NSLog(@"iv:%@", [self convertDataToHexStr:iv]);
     
-    NSLog(@"%@", [self convertDataToHexStr:iv]);
     NSData *privateKeyBytes = [[wallet secret] dataUsingEncoding:NSUTF8StringEncoding];
-    NSLog(@"%@", [self convertDataToHexStr:privateKeyBytes]);
-    NSData *cipherText = [self aesEncryptData:privateKeyBytes key:encryoptKey iv:iv];
-    NSLog(@"%@", [self convertDataToHexStr:cipherText]);
+    NSLog(@"privateKeyBytes:%@", [self convertDataToHexStr:privateKeyBytes]);
+    
+    NSData *cipherText = [self cryptData:privateKeyBytes
+                               operation:kCCEncrypt
+                               mode:kCCModeCTR
+                               algorithm:kCCAlgorithmAES
+                               padding:ccNoPadding
+                               keyLength:kCCKeySizeAES128
+                               iv:iv
+                               key:encryoptKey
+                               error:&error];
+    NSLog(@"cipherText:%@", [self convertDataToHexStr:cipherText]);
+    
     NSData *mac = [self generateMac:derivedKey cipherText:cipherText];
-    NSLog(@"%@", [self convertDataToHexStr:mac]);
+    NSLog(@"mac:%@", [self convertDataToHexStr:mac]);
     
     return [self createWalletFile:wallet cipherText:cipherText iv:iv salt:salt mac:mac n:n p:p];
     
@@ -122,9 +133,9 @@ static NSString* SCRYPT = @"scrypt";
     if([kdfparams prf] == nil)
     {
         int dklen = [kdfparams dklen];
-        int n = [kdfparams n];
-        int p = [kdfparams p];
-        int r = [kdfparams r];
+        int n = [[kdfparams n]intValue];
+        int p = [[kdfparams p]intValue];
+        int r = [[kdfparams r]intValue];
         NSData *salt = [self convertBytesStringToData:[kdfparams salt]];
         NSError *error = nil;
         NSData *passwordByte = [password dataUsingEncoding:NSUTF8StringEncoding];
@@ -142,7 +153,17 @@ static NSString* SCRYPT = @"scrypt";
         return nil;
     }
     NSData *encryoptKey = [derivedKey subdataWithRange:NSMakeRange(0, 16)];
-    NSData *privateKey = [self aesDecryptData:cipherText key:encryoptKey iv:iv];
+    NSError *error = nil;
+    NSData *privateKey = [self cryptData:cipherText
+                               operation:kCCDecrypt
+                                    mode:kCCModeCTR
+                               algorithm:kCCAlgorithmAES
+                                 padding:ccNoPadding
+                               keyLength:kCCKeySizeAES128
+                                      iv:iv
+                                     key:encryoptKey
+                                   error:&error];
+    //NSData *privateKey = [self aesDecryptData:cipherText key:encryoptKey iv:iv];
     NSString *privateKeyUTF8 = [[NSString alloc] initWithData:privateKey encoding:NSUTF8StringEncoding];
 
     Seed *seed = [[Seed alloc] init];
@@ -192,62 +213,94 @@ static NSString* SCRYPT = @"scrypt";
     CFUUIDRef puuid = CFUUIDCreate( nil );
     CFStringRef uuidString = CFUUIDCreateString(nil, puuid);
     NSString *result = (NSString *)CFBridgingRelease(CFStringCreateCopy( NULL, uuidString));
+    
     return result;
-}
-
-+(NSData*) cipherOperation:(NSData*)contentData key:(NSData*)keyData iv:(NSData*)initVector operation:(CCOperation)operation
-{
-    NSUInteger dataLength = contentData.length;
-    
-    void const *initVectorBytes = initVector.bytes;
-    void const *contentBytes = contentData.bytes;
-    void const *keyBytes = keyData.bytes;
-    
-    size_t operationSize = dataLength + kCCBlockSizeAES128;
-    void *operationBytes = malloc(operationSize);
-    if (operationBytes == NULL) {
-        return nil;
-    }
-    size_t actualOutSize = 0;
-    
-    CCCryptorStatus cryptStatus = CCCrypt(operation,
-                                          kCCAlgorithmAES,
-                                          ccNoPadding | kCCModeCTR,
-                                          keyBytes,
-                                          kCCKeySizeAES128,
-                                          initVectorBytes,
-                                          contentBytes,
-                                          dataLength,
-                                          operationBytes,
-                                          operationSize,
-                                          &actualOutSize);
-    if (cryptStatus == kCCSuccess)
-    {
-        return [NSData dataWithBytesNoCopy:operationBytes length:actualOutSize];
-    }
-    
-    NSLog(@"AES加密/解密失败 error: %@", @(cryptStatus));
-    free(operationBytes);
-    operationBytes = NULL;
-    return nil;
-}
-
-+(NSData*) aesEncryptData:(NSData*)contentData key:(NSData*)keyData iv:(NSData*)iv
-{
-    return [self cipherOperation:contentData key:keyData iv:iv operation:kCCEncrypt];
-}
-
-+(NSData*) aesDecryptData:(NSData*)contentData key:(NSData*)keyData iv:(NSData*)iv
-{
-    return [self cipherOperation:contentData key:keyData iv:iv operation:kCCDecrypt];
 }
 
 +(NSData*) generateMac:(NSData*)derivedKey cipherText:(NSData*)cipherText
 {
-    NSMutableData *mData = [[NSMutableData alloc] init];
-    [mData appendData:derivedKey];
-    [mData appendData:cipherText];
-    return [NAKeccak SHA3ForData:mData digestBitLength:256];
+    NSMutableData *result = [[NSMutableData alloc]init];
+    [result appendData:[derivedKey subdataWithRange:NSMakeRange(16, 16)]];
+    [result appendData:cipherText];
+    return [NASHA3 SHA3ForData:result algorithm:NASHA3Algorithm_Keccak_256];
+}
++ (NSData *)cryptData:(NSData *)dataIn
+            operation:(CCOperation)operation  // kCC Encrypt, Decrypt
+                 mode:(CCMode)mode            // kCCMode ECB, CBC, CFB, CTR, OFB, RC4, CFB8
+            algorithm:(CCAlgorithm)algorithm  // CCAlgorithm AES DES, 3DES, CAST, RC4, RC2, Blowfish
+              padding:(CCPadding)padding      // cc NoPadding, PKCS7Padding
+            keyLength:(size_t)keyLength       // kCCKeySizeAES 128, 192, 256
+                   iv:(NSData *)iv            // CBC, CFB, CFB8, OFB, CTR
+                  key:(NSData *)key
+                error:(NSError **)error
+{
+    if (key.length != keyLength) {
+        NSLog(@"CCCryptorArgument key.length: %lu != keyLength: %zu", (unsigned long)key.length, keyLength);
+        if (error) {
+            *error = [NSError errorWithDomain:@"kArgumentError key length" code:key.length userInfo:nil];
+        }
+        return nil;
+    }
+    
+    size_t dataOutMoved = 0;
+    size_t dataOutMovedTotal = 0;
+    CCCryptorStatus ccStatus = 0;
+    CCCryptorRef cryptor = NULL;
+    
+    ccStatus = CCCryptorCreateWithMode(operation, mode, algorithm,
+                                       padding,
+                                       iv.bytes, key.bytes,
+                                       keyLength,
+                                       NULL, 0, 0, // tweak XTS mode, numRounds
+                                       kCCModeOptionCTR_BE, // CCModeOptions
+                                       &cryptor);
+    
+    if (cryptor == 0 || ccStatus != kCCSuccess) {
+        NSLog(@"CCCryptorCreate status: %d", ccStatus);
+        if (error) {
+            *error = [NSError errorWithDomain:@"kCreateError" code:ccStatus userInfo:nil];
+        }
+        CCCryptorRelease(cryptor);
+        return nil;
+    }
+    
+    size_t dataOutLength = CCCryptorGetOutputLength(cryptor, dataIn.length, true);
+    NSMutableData *dataOut = [NSMutableData dataWithLength:dataOutLength];
+    char *dataOutPointer = (char *)dataOut.mutableBytes;
+    
+    ccStatus = CCCryptorUpdate(cryptor,
+                               dataIn.bytes, dataIn.length,
+                               dataOutPointer, dataOutLength,
+                               &dataOutMoved);
+    dataOutMovedTotal += dataOutMoved;
+    
+    if (ccStatus != kCCSuccess) {
+        NSLog(@"CCCryptorUpdate status: %d", ccStatus);
+        if (error) {
+            *error = [NSError errorWithDomain:@"kUpdateError" code:ccStatus userInfo:nil];
+        }
+        CCCryptorRelease(cryptor);
+        return nil;
+    }
+    
+    ccStatus = CCCryptorFinal(cryptor,
+                              dataOutPointer + dataOutMoved, dataOutLength - dataOutMoved,
+                              &dataOutMoved);
+    if (ccStatus != kCCSuccess) {
+        NSLog(@"CCCryptorFinal status: %d", ccStatus);
+        if (error) {
+            *error = [NSError errorWithDomain:@"kFinalError" code:ccStatus userInfo:nil];
+        }
+        CCCryptorRelease(cryptor);
+        return nil;
+    }
+    
+    CCCryptorRelease(cryptor);
+    
+    dataOutMovedTotal += dataOutMoved;
+    dataOut.length = dataOutMovedTotal;
+    
+    return dataOut;
 }
 @end
 
